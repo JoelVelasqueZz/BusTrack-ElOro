@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "seed:build-routes": "node scripts/seed-data/build-routes.mjs",
+    "seed:routes": "node scripts/seedRoutes.mjs"
   },
   "dependencies": {
     "@capacitor-community/background-geolocation": "^1.2.26",

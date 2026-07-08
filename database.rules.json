@@ -12,6 +12,14 @@
     "tracks": {
       ".read": true,
       ".write": true
+    },
+    "routes": {
+      ".read": true,
+      ".write": true
+    },
+    "unitCounters": {
+      ".read": true,
+      ".write": true
     }
   }
 }
