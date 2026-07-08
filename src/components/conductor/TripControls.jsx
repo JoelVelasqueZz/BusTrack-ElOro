@@ -7,6 +7,7 @@ export function TripControls({ tripActive, onStart, onStop }) {
   const [empresa, setEmpresa] = useState('')
   const [numero, setNumero] = useState('')
   const [destino, setDestino] = useState('')
+  const [recordRoute, setRecordRoute] = useState(false)
 
   useEffect(() => {
     if (!routeId && routes.length > 0) setRouteId(routes[0].id)
@@ -62,6 +63,16 @@ export function TripControls({ tripActive, onStart, onStop }) {
         />
       </label>
 
+      <label className="trip-controls__field trip-controls__field--checkbox">
+        <input
+          type="checkbox"
+          checked={recordRoute}
+          onChange={(e) => setRecordRoute(e.target.checked)}
+          disabled={tripActive}
+        />
+        Grabar este recorrido como ruta oficial
+      </label>
+
       {tripActive ? (
         <button className="trip-button trip-button--stop" onClick={onStop}>
           Detener viaje
@@ -76,6 +87,7 @@ export function TripControls({ tripActive, onStart, onStop }) {
               empresa: empresa.trim(),
               numero: numero.trim(),
               destino: destino.trim(),
+              recordRoute,
             })
           }
         >

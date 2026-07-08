@@ -3,8 +3,10 @@ import { useRole } from '../../context/RoleContext.jsx'
 import { useWakeLock } from '../../hooks/useWakeLock.js'
 import { useGeolocation } from '../../hooks/useGeolocation.js'
 import { useMotionDetector } from '../../hooks/useMotionDetector.js'
+import { useRouteRecorder } from '../../hooks/useRouteRecorder.js'
 import { startPublishing, updateBusInfo, stopPublishing } from '../../services/locationService.js'
 import { reportPothole } from '../../services/potholeService.js'
+import { saveRecordedPath } from '../../services/routeService.js'
 import { assignBusUnit } from '../../services/busUnitService.js'
 import { TripControls } from './TripControls.jsx'
 
@@ -13,9 +15,11 @@ export function ConductorView() {
   const [tripActive, setTripActive] = useState(false)
   const [busInfo, setBusInfo] = useState(null)
   const [potholeCount, setPotholeCount] = useState(0)
+  const [recordingRoute, setRecordingRoute] = useState(false)
 
   useWakeLock(tripActive)
   const { position, error: geoError } = useGeolocation(tripActive)
+  const { getPoints, pointCount } = useRouteRecorder(tripActive && recordingRoute, position)
 
   const handlePothole = useCallback(
     (magnitude) => {
@@ -38,7 +42,7 @@ export function ConductorView() {
     })
   }, [tripActive, position, busInfo])
 
-  const handleStart = async ({ routeId, empresa, numero, destino }) => {
+  const handleStart = async ({ routeId, empresa, numero, destino, recordRoute }) => {
     const { busId, unitLabel } = await assignBusUnit(routeId, numero)
     const info = {
       busId,
@@ -55,12 +59,20 @@ export function ConductorView() {
     }
     setBusInfo(info)
     setPotholeCount(0)
+    setRecordingRoute(recordRoute)
     setTripActive(true)
     startPublishing(info)
   }
 
   const handleStop = () => {
+    if (recordingRoute && busInfo?.routeId) {
+      const points = getPoints()
+      if (points.length >= 10) {
+        saveRecordedPath(busInfo.routeId, points).catch(() => {})
+      }
+    }
     setTripActive(false)
+    setRecordingRoute(false)
     stopPublishing()
     setBusInfo(null)
   }
@@ -95,6 +107,12 @@ export function ConductorView() {
             <span className="trip-status__label">Baches detectados</span>
             <span className="trip-status__value trip-status__value--amber">{potholeCount}</span>
           </div>
+          {recordingRoute && (
+            <div className="trip-status__row">
+              <span className="trip-status__label">Grabando recorrido</span>
+              <span className="trip-status__value">{pointCount} puntos</span>
+            </div>
+          )}
           {geoError && <p className="trip-status__error">Error de GPS: {geoError.message}</p>}
         </div>
       )}
