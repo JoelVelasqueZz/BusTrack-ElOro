@@ -16,6 +16,7 @@ export function ConductorView() {
   const [busInfo, setBusInfo] = useState(null)
   const [potholeCount, setPotholeCount] = useState(0)
   const [recordingRoute, setRecordingRoute] = useState(false)
+  const [startError, setStartError] = useState(null)
 
   useWakeLock(tripActive)
   const { position, error: geoError } = useGeolocation(tripActive)
@@ -43,7 +44,15 @@ export function ConductorView() {
   }, [tripActive, position, busInfo])
 
   const handleStart = async ({ routeId, empresa, numero, destino, recordRoute }) => {
-    const { busId, unitLabel } = await assignBusUnit(routeId, numero)
+    setStartError(null)
+    let assignment
+    try {
+      assignment = await assignBusUnit(routeId, numero)
+    } catch (err) {
+      setStartError(err)
+      return
+    }
+    const { busId, unitLabel } = assignment
     const info = {
       busId,
       driverId: deviceId,
@@ -88,6 +97,12 @@ export function ConductorView() {
       </header>
 
       <TripControls tripActive={tripActive} onStart={handleStart} onStop={handleStop} />
+
+      {startError && (
+        <p className="trip-status__error">
+          No se pudo iniciar el viaje: {startError.message}
+        </p>
+      )}
 
       {tripActive && (
         <div className="trip-status">

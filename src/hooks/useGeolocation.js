@@ -11,7 +11,11 @@ export function useGeolocation(active) {
   const watchIdRef = useRef(null)
 
   useEffect(() => {
-    if (!active) return
+    if (!active) {
+      setPosition(null)
+      setError(null)
+      return
+    }
 
     let cancelled = false
 
