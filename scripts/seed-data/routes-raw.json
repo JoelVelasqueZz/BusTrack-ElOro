@@ -1,0 +1,189 @@
+{
+  "linea-1": {
+    "name": "Línea 1",
+    "color": "#e63946",
+    "stops": [
+      "El Cambio", "Universidad", "RTV Movilidad Machala EP", "Terminal Terrestre",
+      "C.C. Paseo Shopping", "C.C. La Piazza", "Campus UTMACH", "Cementerio General",
+      "Parque Colón", "Movilidad Machala EP", "Aguas Machala EP", "Estadio 9 de Mayo",
+      "Mercado Buenos Aire", "Puerto Bolívar", "ECU 911", "Comando de Policía",
+      "Mercado 25 de Junio"
+    ]
+  },
+  "linea-2": {
+    "name": "Línea 2",
+    "color": "#2a9d8f",
+    "stops": [
+      "C.C. La Piazza", "Torre Medica La Carolina", "C.C. UNIORO", "Hospital Teófilo Dávila",
+      "SOLCA", "Estadio 9 de Mayo", "Parque Lineal", "Coliseo Walter Saco",
+      "Ex Granja", "Parque Centenario", "Cuerpo de Bomberos", "Comando de Policía",
+      "Cementerio General"
+    ]
+  },
+  "linea-3": {
+    "name": "Línea 3",
+    "color": "#f4a261",
+    "stops": [
+      "C.C. La Piazza", "Campus UTMACH", "Cementerio General", "Parque Urbano",
+      "Centro de Rehabilitación Social", "Comando de Policía", "Aguas Machala EP", "Parque Centenario",
+      "Estadio 9 de Mayo", "Ex Granja", "Coliseo Walter Saco", "Parque Lineal",
+      "Mercado 25 de Junio", "Torre Medica La Carolina", "C.C. UNIORO"
+    ]
+  },
+  "linea-4": {
+    "name": "Línea 4",
+    "color": "#264653",
+    "stops": [
+      "RTV Movilidad Machala EP", "Terminal Terrestre", "C.C. Paseo Shopping", "Hospital IESS",
+      "Parque Picapiedra"
+    ]
+  },
+  "linea-5": {
+    "name": "Línea 5",
+    "color": "#8ac926",
+    "stops": [
+      "El Cambio", "Universidad", "RTV Movilidad Machala EP", "Terminal Terrestre",
+      "C.C. Paseo Shopping", "Torre Medica La Carolina", "C.C. UNIORO", "Camposanto Parque de la Paz",
+      "Hospital Teófilo Dávila", "SOLCA", "Estadio 9 de Mayo", "Mercado de Mi Ciudad",
+      "Cuerpo de Bomberos"
+    ]
+  },
+  "linea-6": {
+    "name": "Línea 6",
+    "color": "#6a4c93",
+    "stops": [
+      "Camposanto Parque de la Paz", "Torre Medica La Carolina", "C.C. UNIORO", "Campus UTMACH",
+      "Cementerio General", "Parque Colón", "Cuerpo de Bomberos", "Fuerte Militar",
+      "ECU 911", "Coliseo Walter Saco", "Movilidad Machala EP", "Mercado 25 de Junio"
+    ]
+  },
+  "linea-6t": {
+    "name": "Línea 6T",
+    "color": "#1982c4",
+    "stops": [
+      "Universidad", "RTV Movilidad Machala EP", "Terminal Terrestre", "C.C. Paseo Shopping",
+      "Parroquia Jubones", "SOLCA", "Hospital Teófilo Dávila", "Ex Granja",
+      "Estadio 9 de Mayo", "Mercado de Mi Ciudad", "Prefectura"
+    ]
+  },
+  "linea-7": {
+    "name": "Línea 7",
+    "color": "#ff595e",
+    "stops": [
+      "Parroquia Jubones", "Hospital Teófilo Dávila", "SOLCA", "Ex Granja",
+      "Estadio 9 de Mayo", "Parque Lineal", "Cuerpo de Bomberos", "Coliseo de Deportes Machala"
+    ]
+  },
+  "linea-7c": {
+    "name": "Línea 7C",
+    "color": "#ffca3a",
+    "stops": [
+      "Terminal Terrestre", "C.C. Paseo Shopping", "C.C. La Piazza", "Campus UTMACH",
+      "Cementerio General", "Parque Colón", "Cruz Roja", "Estadio 9 de Mayo",
+      "Ex Granja", "Cuerpo de Bomberos", "Comando de Policía", "Aguas Machala EP",
+      "Prefectura", "SOLCA", "Hospital Teófilo Dávila"
+    ]
+  },
+  "linea-8": {
+    "name": "Línea 8",
+    "color": "#6a994e",
+    "stops": [
+      "C.C. La Piazza", "Hospital IESS", "Cementerio General", "Movilidad Machala EP",
+      "Aguas Machala EP", "Coliseo de Deportes Machala", "Estadio 9 de Mayo", "Ex Granja",
+      "Sauces", "Mercado 25 de Junio", "Campus UTMACH", "Torre Medica La Carolina",
+      "C.C. UNIORO", "Cdla. Las Brisas"
+    ]
+  },
+  "linea-10": {
+    "name": "Línea 10",
+    "color": "#b5179e",
+    "stops": [
+      "Torre Medica La Carolina", "C.C. UNIORO", "Campus UTMACH", "Cementerio General",
+      "Parque Colón", "Cuerpo de Bomberos", "ECU 911", "Coliseo Walter Saco",
+      "Fuerte Militar", "Coliseo de Deportes Machala", "Sauces", "Ex Granja",
+      "Estadio 9 de Mayo", "Movilidad Machala EP", "Hospital IESS", "C.C. La Piazza"
+    ]
+  },
+  "linea-11": {
+    "name": "Línea 11",
+    "color": "#4361ee",
+    "stops": [
+      "Parque Picapiedra", "Mercado de Mi Ciudad", "Mercado 25 de Junio", "Cementerio General",
+      "Campus UTMACH", "Parque Colón", "Cuerpo de Bomberos"
+    ]
+  },
+  "linea-12": {
+    "name": "Línea 12",
+    "color": "#f72585",
+    "stops": [
+      "Vía Balosa", "Movilidad Machala EP", "Aguas Machala EP", "Coliseo Walter Saco",
+      "Ex Granja", "Parroquia Jubones", "SOLCA", "Hospital Teófilo Dávila",
+      "Estadio 9 de Mayo", "Movilidad Machala EP", "Mercado 25 de Junio"
+    ]
+  },
+  "linea-13": {
+    "name": "Línea 13",
+    "color": "#43aa8b",
+    "stops": [
+      "El Cambio", "Universidad", "RTV Movilidad Machala EP", "Terminal Terrestre",
+      "C.C. Paseo Shopping", "C.C. La Piazza", "Campus UTMACH", "Cementerio General",
+      "Parque Colón", "Movilidad Machala EP", "Aguas Machala EP", "Estadio 9 de Mayo",
+      "Mercado Buenos Aire", "Puerto Bolívar", "ECU 911", "Comando de Policía",
+      "Mercado 25 de Junio"
+    ]
+  },
+  "linea-14": {
+    "name": "Línea 14",
+    "color": "#f9844a",
+    "stops": [
+      "San Ramón", "Campus UTMACH", "Cementerio General", "Hospital Teófilo Dávila",
+      "SOLCA", "Ex Granja", "Cuerpo de Bomberos", "Movilidad Machala EP"
+    ]
+  },
+  "linea-14c": {
+    "name": "Línea 14C",
+    "color": "#277da1",
+    "stops": [
+      "Hospital IESS", "C.C. La Piazza", "Campus UTMACH", "Cementerio General",
+      "Hospital Teófilo Dávila", "SOLCA", "Estadio 9 de Mayo", "Movilidad Machala EP",
+      "Mercado 25 de Junio"
+    ]
+  },
+  "linea-15": {
+    "name": "Línea 15",
+    "color": "#90be6d",
+    "stops": [
+      "Florida", "Mercado de Mi Ciudad", "Movilidad Machala EP", "Prefectura",
+      "Hospital Teófilo Dávila", "SOLCA", "Parque Colón", "Cuerpo de Bomberos"
+    ]
+  },
+  "linea-16": {
+    "name": "Línea 16",
+    "color": "#f94144",
+    "stops": [
+      "Estadio 9 de Mayo", "Florida", "Movilidad Machala EP", "Mercado 25 de Junio",
+      "Campus UTMACH", "Torre Medica La Carolina", "C.C. UNIORO", "Camposanto Parque de la Paz",
+      "Parque Centenario", "Coliseo de Deportes Machala", "Ex Granja", "Cementerio General",
+      "Cuerpo de Bomberos"
+    ]
+  },
+  "linea-18": {
+    "name": "Línea 18",
+    "color": "#577590",
+    "stops": [
+      "El Cambio", "Universidad", "Terminal Terrestre", "RTV Movilidad Machala EP",
+      "Hospital Velasco Ibarra", "Cementerio General", "Cuerpo de Bomberos", "Ex Granja",
+      "Estadio 9 de Mayo", "Fuerte Militar", "Coliseo Machala", "Coliseo Walter Saco",
+      "Mercado Buenos Aire", "Coliseo de Deportes Machala"
+    ]
+  },
+  "linea-20": {
+    "name": "Línea 20",
+    "color": "#9b5de5",
+    "stops": [
+      "El Retiro", "Universidad", "C.C. Paseo Shopping", "C.C. La Piazza",
+      "Campus UTMACH", "Cementerio General", "Hospital Teófilo Dávila", "SOLCA",
+      "Estadio 9 de Mayo", "Movilidad Machala EP", "Mercado 25 de Junio"
+    ]
+  }
+}
