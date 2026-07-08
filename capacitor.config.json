@@ -1,0 +1,8 @@
+{
+  "appId": "com.bustrack.eloro",
+  "appName": "BusTrack El Oro",
+  "webDir": "dist",
+  "android": {
+    "useLegacyBridge": true
+  }
+}

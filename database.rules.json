@@ -1,0 +1,17 @@
+{
+  "rules": {
+    "buses": {
+      ".read": true,
+      ".write": true,
+      ".indexOn": ["active"]
+    },
+    "potholes": {
+      ".read": true,
+      ".write": true
+    },
+    "tracks": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}
