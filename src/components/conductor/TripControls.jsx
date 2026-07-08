@@ -1,11 +1,16 @@
-import { useState } from 'react'
-import { ROUTES } from '../../config/machala.js'
+import { useEffect, useState } from 'react'
+import { useRoutes } from '../../hooks/useRoutes.js'
 
 export function TripControls({ tripActive, onStart, onStop }) {
-  const [routeId, setRouteId] = useState(ROUTES[0]?.id ?? '')
+  const routes = useRoutes()
+  const [routeId, setRouteId] = useState('')
   const [empresa, setEmpresa] = useState('')
   const [numero, setNumero] = useState('')
   const [destino, setDestino] = useState('')
+
+  useEffect(() => {
+    if (!routeId && routes.length > 0) setRouteId(routes[0].id)
+  }, [routes, routeId])
 
   const canStart =
     routeId && empresa.trim().length > 0 && numero.trim().length > 0 && destino.trim().length > 0
@@ -15,7 +20,7 @@ export function TripControls({ tripActive, onStart, onStop }) {
       <label className="trip-controls__field">
         Ruta
         <select value={routeId} onChange={(e) => setRouteId(e.target.value)} disabled={tripActive}>
-          {ROUTES.map((route) => (
+          {routes.map((route) => (
             <option key={route.id} value={route.id}>
               {route.name}
             </option>

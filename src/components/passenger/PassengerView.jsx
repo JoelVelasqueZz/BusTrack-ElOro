@@ -1,19 +1,24 @@
-import { useMemo, useState } from 'react'
-import { ROUTES } from '../../config/machala.js'
+import { useEffect, useMemo, useState } from 'react'
 import { useRole } from '../../context/RoleContext.jsx'
 import { useBuses } from '../../hooks/useBuses.js'
 import { useEta } from '../../hooks/useEta.js'
 import { usePassengerLocation } from '../../hooks/usePassengerLocation.js'
+import { useRoutes } from '../../hooks/useRoutes.js'
 import { BusMap } from './BusMap.jsx'
 import { StopSelector } from './StopSelector.jsx'
 import { EtaPanel } from './EtaPanel.jsx'
 
 export function PassengerView() {
   const { clearRole } = useRole()
-  const [routeId, setRouteId] = useState(ROUTES[0]?.id ?? '')
+  const routes = useRoutes()
+  const [routeId, setRouteId] = useState('')
   const [stopId, setStopId] = useState('')
 
-  const route = useMemo(() => ROUTES.find((r) => r.id === routeId), [routeId])
+  useEffect(() => {
+    if (!routeId && routes.length > 0) setRouteId(routes[0].id)
+  }, [routes, routeId])
+
+  const route = useMemo(() => routes.find((r) => r.id === routeId), [routes, routeId])
   const stop = useMemo(() => route?.stops.find((s) => s.id === stopId) ?? null, [route, stopId])
 
   const allBuses = useBuses()
@@ -52,7 +57,7 @@ export function PassengerView() {
           <label className="route-selector">
             <span className="sr-only">Ruta</span>
             <select value={routeId} onChange={(e) => handleRouteChange(e.target.value)}>
-              {ROUTES.map((r) => (
+              {routes.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.name}
                 </option>
