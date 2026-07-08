@@ -5,6 +5,7 @@ import { useGeolocation } from '../../hooks/useGeolocation.js'
 import { useMotionDetector } from '../../hooks/useMotionDetector.js'
 import { startPublishing, updateBusInfo, stopPublishing } from '../../services/locationService.js'
 import { reportPothole } from '../../services/potholeService.js'
+import { assignBusUnit } from '../../services/busUnitService.js'
 import { TripControls } from './TripControls.jsx'
 
 export function ConductorView() {
@@ -37,14 +38,15 @@ export function ConductorView() {
     })
   }, [tripActive, position, busInfo])
 
-  const handleStart = ({ routeId, empresa, numero, destino }) => {
-    const busId = `${routeId}-${numero}`
+  const handleStart = async ({ routeId, empresa, numero, destino }) => {
+    const { busId, unitLabel } = await assignBusUnit(routeId, numero)
     const info = {
       busId,
       driverId: deviceId,
       routeId,
       empresa,
       numero,
+      unitLabel,
       destino,
       lat: null,
       lng: null,
@@ -80,7 +82,7 @@ export function ConductorView() {
           <div className="trip-status__row trip-status__row--headline">
             <span className="trip-status__label">Viaje activo</span>
             <span className="trip-status__value">
-              {busInfo?.empresa} #{busInfo?.numero} → {busInfo?.destino}
+              {busInfo?.empresa} #{busInfo?.unitLabel} → {busInfo?.destino}
             </span>
           </div>
           <div className="trip-status__row">
