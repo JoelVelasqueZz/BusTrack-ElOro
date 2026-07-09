@@ -68,10 +68,11 @@ for (const [routeId, route] of Object.entries(rawRoutes)) {
   } else {
     try {
       path = await fetchOsrmPath(stops)
-      await sleep(OSRM_DELAY_MS)
     } catch (error) {
       console.warn(`${routeId}: fallo OSRM (${error.message}), usando línea recta`)
       path = straightPath
+    } finally {
+      await sleep(OSRM_DELAY_MS)
     }
   }
 
