@@ -1,7 +1,17 @@
 # Trazado de ruta siguiendo calles reales (OSRM)
 
 **Fecha:** 2026-07-09
-**Estado:** Aprobado por el usuario, pendiente de plan de implementación.
+**Estado:** Aprobado, implementado (Task 1) y revisado tras piloto real. Ver "Revisión post-piloto" al final — cambia la fuente principal de datos.
+
+## Revisión post-piloto (mismo día)
+
+El piloto de Línea 1/Línea 6 con el método original (OSRM enrutando entre las paradas geocodificadas) mostró un problema de fondo: las "paradas" (`pois.json`) son puntos de referencia cercanos a la ruta, no puntos por los que el bus literalmente pasa — OSRM snapeaba el punto "Universidad" a un camino interno del campus (`Via A Unidad Académica de Ciencias Sociales`) en vez de la avenida real (Av. 25 de Junio). Además, se descubrió que **17 de los 45 lugares en `pois.json` (38%) nunca se geocodificaron** y comparten una coordenada placeholder idéntica (`-3.2586, -79.9606`) — un problema de datos más grave que el de enrutamiento.
+
+Investigando alternativas, se encontró que **OpenStreetMap ya tiene las 20 líneas de Machala mapeadas como relaciones `route=bus` reales**, digitalizadas por la comunidad de OSM con nombres como `Linea 1 El Cambio - Mercado 25 de Junio` — que coincide con el orden de paradas ya usado en `routes-raw.json`. Se probó extraer la geometría de esa relación para Línea 1 vía Overpass API: 52 segmentos de vía (excluyendo miembros `role=platform/stop`, que son las paradas, no la calle) encadenados correctamente, con solo un hueco de 445m en toda la ruta.
+
+**Nueva fuente principal de datos:** en vez de generar `path` enrutando con OSRM entre las paradas geocodificadas, se busca la relación de bus de OSM que corresponde a cada línea (por nombre, ej. `Linea {N} {primera parada} - {última parada}`), se trae su geometría completa vía Overpass, se descartan los miembros que son paradas (no calle), y se encadenan los segmentos de vía en orden. Si queda algún hueco grande entre segmentos consecutivos (mapeo incompleto de OSM), se rellena con una llamada puntual a OSRM entre los dos extremos del hueco. El método anterior (OSRM enrutando entre paradas, ya implementado en Task 1) pasa a ser el **fallback**: se usa solo si no se encuentra una relación de OSM para esa línea. La línea recta entre paradas sigue siendo el último fallback si todo lo demás falla.
+
+El problema de los 17 POIs sin geocodificar queda **fuera de alcance de esta spec** — no bloquea la generación del `path` (que ahora viene de la relación de OSM, no de las paradas), pero sigue pendiente para la precisión de los marcadores de parada en el mapa. Se registra como mejora futura, no se resuelve aquí.
 
 ## Contexto y alcance
 
