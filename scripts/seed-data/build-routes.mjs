@@ -138,6 +138,45 @@ async function bridgeGapIfNeeded(path, nextPoint) {
   }
 }
 
+function greedyMergeFragments(fragments) {
+  let frags = fragments.map((fragment) => fragment.slice())
+
+  while (frags.length > 1) {
+    let best = null
+    for (let i = 0; i < frags.length; i++) {
+      for (let j = 0; j < frags.length; j++) {
+        if (i === j) continue
+        const a = frags[i]
+        const b = frags[j]
+        const options = [
+          { gap: dist(a[a.length - 1], b[0]), mode: 'append' },
+          { gap: dist(a[a.length - 1], b[b.length - 1]), mode: 'append-reversed' },
+        ]
+        for (const option of options) {
+          if (!best || option.gap < best.gap) best = { ...option, i, j }
+        }
+      }
+    }
+
+    const a = frags[best.i]
+    const b = frags[best.j]
+    const merged = best.mode === 'append' ? [...a, ...b] : [...a, ...b.slice().reverse()]
+    frags = frags.filter((_, k) => k !== best.i && k !== best.j)
+    frags.push(merged)
+  }
+
+  return frags[0]
+}
+
+async function patchResidualGaps(path) {
+  const result = [path[0]]
+  for (let i = 1; i < path.length; i++) {
+    await bridgeGapIfNeeded(result, path[i])
+    result.push(path[i])
+  }
+  return result
+}
+
 async function stitchRelationPath(relation) {
   const ways = relation.members.filter(
     (m) =>
@@ -150,23 +189,9 @@ async function stitchRelationPath(relation) {
     throw new Error('la relación no tiene segmentos de vía utilizables')
   }
 
-  const path = ways[0].geometry.map((p) => [p.lat, p.lon])
-
-  for (let i = 1; i < ways.length; i++) {
-    const geom = ways[i].geometry
-    const startPt = [geom[0].lat, geom[0].lon]
-    const endPt = [geom[geom.length - 1].lat, geom[geom.length - 1].lon]
-    const prevEnd = path[path.length - 1]
-    const seg =
-      dist(prevEnd, endPt) < dist(prevEnd, startPt)
-        ? geom.map((p) => [p.lat, p.lon]).reverse()
-        : geom.map((p) => [p.lat, p.lon])
-
-    await bridgeGapIfNeeded(path, seg[0])
-    path.push(...seg)
-  }
-
-  return path
+  const fragments = ways.map((way) => way.geometry.map((p) => [p.lat, p.lon]))
+  const merged = greedyMergeFragments(fragments)
+  return await patchResidualGaps(merged)
 }
 
 async function combineTwoRelations(relA, relB) {
