@@ -151,6 +151,7 @@ function greedyMergeFragments(fragments) {
         const options = [
           { gap: dist(a[a.length - 1], b[0]), mode: 'append' },
           { gap: dist(a[a.length - 1], b[b.length - 1]), mode: 'append-reversed' },
+          { gap: dist(a[0], b[0]), mode: 'prepend-a-reversed' },
         ]
         for (const option of options) {
           if (!best || option.gap < best.gap) best = { ...option, i, j }
@@ -160,7 +161,12 @@ function greedyMergeFragments(fragments) {
 
     const a = frags[best.i]
     const b = frags[best.j]
-    const merged = best.mode === 'append' ? [...a, ...b] : [...a, ...b.slice().reverse()]
+    const merged =
+      best.mode === 'append'
+        ? [...a, ...b]
+        : best.mode === 'append-reversed'
+          ? [...a, ...b.slice().reverse()]
+          : [...a.slice().reverse(), ...b]
     frags = frags.filter((_, k) => k !== best.i && k !== best.j)
     frags.push(merged)
   }
