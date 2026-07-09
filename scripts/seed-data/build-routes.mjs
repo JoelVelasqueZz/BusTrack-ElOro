@@ -9,6 +9,7 @@ const OSRM_DELAY_MS = 300
 const OVERPASS_URL = 'https://overpass-api.de/api/interpreter'
 const MACHALA_BBOX = '-3.35,-80.05,-3.20,-79.85'
 const GAP_PATCH_THRESHOLD_DEG = 300 / 111000
+const JUNCTION_MAX_DEG = 50 / 111000
 
 const onlyArg = process.argv.find((arg) => arg.startsWith('--only='))
 const onlyIds = onlyArg ? onlyArg.slice('--only='.length).split(',') : null
@@ -55,7 +56,7 @@ async function overpassQuery(query) {
     method: 'POST',
     headers: {
       'Content-Type': 'text/plain',
-      'User-Agent': 'BusTrack-BuildScript/1.0'
+      'User-Agent': 'BusTrack-BuildScript/1.0',
     },
     body: query,
   })
@@ -82,7 +83,13 @@ function lineLabelFromRouteId(routeId) {
   return suffix.replace(/[a-z]+$/i, (letters) => letters.toUpperCase())
 }
 
-function findMatchingRelation(relationsIndex, routeId, stops) {
+function findCandidateRelations(relationsIndex, routeId) {
+  const lineLabel = lineLabelFromRouteId(routeId)
+  const prefixPattern = new RegExp(`^linea\\s+${lineLabel}\\s`, 'i')
+  return relationsIndex.filter((rel) => prefixPattern.test(rel.name))
+}
+
+function matchSingleRelationByName(relationsIndex, routeId, stops) {
   const lineLabel = lineLabelFromRouteId(routeId)
   const prefixPattern = new RegExp(`^linea\\s+${lineLabel}\\s`, 'i')
   const candidates = relationsIndex.filter((rel) => prefixPattern.test(rel.name))
@@ -117,6 +124,20 @@ async function fetchRelationsGeometry(relationIds) {
   return map
 }
 
+async function bridgeGapIfNeeded(path, nextPoint) {
+  const prevEnd = path[path.length - 1]
+  const gap = dist(prevEnd, nextPoint)
+  if (gap > GAP_PATCH_THRESHOLD_DEG) {
+    try {
+      const patch = await fetchOsrmPath([prevEnd, nextPoint])
+      path.push(...patch.slice(1, -1))
+      await sleep(OSRM_DELAY_MS)
+    } catch (error) {
+      console.warn(`  hueco de ~${Math.round(gap * 111000)}m sin poder rellenar (${error.message})`)
+    }
+  }
+}
+
 async function stitchRelationPath(relation) {
   const ways = relation.members.filter(
     (m) =>
@@ -132,29 +153,48 @@ async function stitchRelationPath(relation) {
   const path = ways[0].geometry.map((p) => [p.lat, p.lon])
 
   for (let i = 1; i < ways.length; i++) {
-    const prevEnd = path[path.length - 1]
     const geom = ways[i].geometry
     const startPt = [geom[0].lat, geom[0].lon]
     const endPt = [geom[geom.length - 1].lat, geom[geom.length - 1].lon]
-    const distToStart = dist(prevEnd, startPt)
-    const distToEnd = dist(prevEnd, endPt)
-    const seg = distToEnd < distToStart ? geom.map((p) => [p.lat, p.lon]).reverse() : geom.map((p) => [p.lat, p.lon])
-    const gap = Math.min(distToStart, distToEnd)
+    const prevEnd = path[path.length - 1]
+    const seg =
+      dist(prevEnd, endPt) < dist(prevEnd, startPt)
+        ? geom.map((p) => [p.lat, p.lon]).reverse()
+        : geom.map((p) => [p.lat, p.lon])
 
-    if (gap > GAP_PATCH_THRESHOLD_DEG) {
-      try {
-        const patch = await fetchOsrmPath([prevEnd, seg[0]])
-        path.push(...patch.slice(1, -1))
-        await sleep(OSRM_DELAY_MS)
-      } catch (error) {
-        console.warn(`  hueco de ~${Math.round(gap * 111000)}m sin poder rellenar (${error.message})`)
-      }
-    }
-
+    await bridgeGapIfNeeded(path, seg[0])
     path.push(...seg)
   }
 
   return path
+}
+
+async function combineTwoRelations(relA, relB) {
+  const pathA = await stitchRelationPath(relA)
+  const pathB = await stitchRelationPath(relB)
+
+  const endsA = [pathA[0], pathA[pathA.length - 1]]
+  const endsB = [pathB[0], pathB[pathB.length - 1]]
+
+  let best = null
+  for (let i = 0; i < 2; i++) {
+    for (let j = 0; j < 2; j++) {
+      const gap = dist(endsA[i], endsB[j])
+      if (!best || gap < best.gap) best = { gap, i, j }
+    }
+  }
+
+  if (best.gap > JUNCTION_MAX_DEG) {
+    return null
+  }
+
+  const orientedA = best.i === 1 ? pathA : [...pathA].reverse()
+  const orientedB = best.j === 0 ? pathB : [...pathB].reverse()
+
+  const combined = [...orientedA]
+  await bridgeGapIfNeeded(combined, orientedB[0])
+  combined.push(...orientedB)
+  return combined
 }
 
 const rawRoutes = JSON.parse(readFileSync(join(__dirname, 'routes-raw.json'), 'utf-8'))
@@ -187,15 +227,15 @@ for (const [routeId, route] of Object.entries(rawRoutes)) {
   })
 }
 
-const matches = {}
+const candidatesByRoute = {}
 for (const [routeId, route] of Object.entries(rawRoutes)) {
   if (Array.isArray(route.path)) continue
   if (onlyIds && !onlyIds.includes(routeId)) continue
-  const match = findMatchingRelation(relationsIndex, routeId, stopsByRoute[routeId])
-  if (match) matches[routeId] = match
+  const candidates = findCandidateRelations(relationsIndex, routeId)
+  if (candidates.length > 0) candidatesByRoute[routeId] = candidates
 }
 
-const relationIdsToFetch = Object.values(matches).map((m) => m.id)
+const relationIdsToFetch = [...new Set(Object.values(candidatesByRoute).flat().map((c) => c.id))]
 let relationsGeometry = new Map()
 if (relationIdsToFetch.length > 0) {
   await sleep(1000)
@@ -221,24 +261,42 @@ for (const [routeId, route] of Object.entries(rawRoutes)) {
   } else if (onlyIds && !onlyIds.includes(routeId)) {
     path = straightPath
   } else {
-    const match = matches[routeId]
-    const relation = match ? relationsGeometry.get(match.id) : null
+    const candidates = candidatesByRoute[routeId] || []
+    const geometries = candidates.map((c) => relationsGeometry.get(c.id)).filter(Boolean)
 
     path = null
-    if (relation) {
+
+    if (geometries.length >= 2) {
       try {
-        let stitched = await stitchRelationPath(relation)
-        if (match.reversed) stitched = stitched.reverse()
-        path = stitched
-        console.log(`${routeId}: usando trazado real de OSM (relación ${match.id}, ${stitched.length} puntos)`)
+        const combined = await combineTwoRelations(geometries[0], geometries[1])
+        if (combined) {
+          path = combined
+          console.log(
+            `${routeId}: usando trazado real de OSM combinando 2 relaciones (${geometries[0].id}+${geometries[1].id}, ${combined.length} puntos)`
+          )
+        }
       } catch (error) {
-        console.warn(`${routeId}: fallo al procesar relación de OSM (${error.message}), usando respaldo OSRM entre paradas`)
+        console.warn(`${routeId}: fallo al combinar relaciones de OSM (${error.message})`)
       }
-    } else {
-      console.warn(`${routeId}: sin trazado de OSM disponible, usando respaldo OSRM entre paradas`)
+    }
+
+    if (!path && geometries.length >= 1) {
+      const singleMatch = matchSingleRelationByName(relationsIndex, routeId, stops)
+      const relation = singleMatch ? relationsGeometry.get(singleMatch.id) : null
+      if (relation) {
+        try {
+          let stitched = await stitchRelationPath(relation)
+          if (singleMatch.reversed) stitched = stitched.reverse()
+          path = stitched
+          console.log(`${routeId}: usando trazado real de OSM (relación ${singleMatch.id}, ${stitched.length} puntos)`)
+        } catch (error) {
+          console.warn(`${routeId}: fallo al procesar relación de OSM (${error.message})`)
+        }
+      }
     }
 
     if (!path) {
+      console.warn(`${routeId}: sin trazado de OSM disponible, usando respaldo OSRM entre paradas`)
       try {
         path = await fetchOsrmPath(stops.map((stop) => [stop.lat, stop.lng]))
       } catch (error) {
