@@ -42,6 +42,7 @@ export function PassengerView() {
           buses={routeBuses}
           stops={route?.stops ?? []}
           routeColor={route?.color}
+          path={route?.path}
           passengerPosition={passengerPosition}
         />
 

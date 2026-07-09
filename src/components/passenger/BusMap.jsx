@@ -60,7 +60,7 @@ function BusTrack({ busId, color }) {
   return <Polyline positions={points} pathOptions={{ color, weight: 4, opacity: 0.7 }} />
 }
 
-export function BusMap({ buses, stops, routeColor, passengerPosition }) {
+export function BusMap({ buses, stops, routeColor, path, passengerPosition }) {
   return (
     <MapContainer
       center={MACHALA_CENTER}
@@ -72,6 +72,10 @@ export function BusMap({ buses, stops, routeColor, passengerPosition }) {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+
+      {path && path.length >= 2 && (
+        <Polyline positions={path} pathOptions={{ color: routeColor ?? '#1a2b4a', weight: 3 }} />
+      )}
 
       {stops.map((stop) => (
         <CircleMarker
