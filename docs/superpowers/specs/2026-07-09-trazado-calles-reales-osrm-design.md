@@ -13,6 +13,16 @@ Investigando alternativas, se encontró que **OpenStreetMap ya tiene las 20 lín
 
 El problema de los 17 POIs sin geocodificar queda **fuera de alcance de esta spec** — no bloquea la generación del `path` (que ahora viene de la relación de OSM, no de las paradas), pero sigue pendiente para la precisión de los marcadores de parada en el mapa. Se registra como mejora futura, no se resuelve aquí.
 
+## Revisión post-piloto v2 (mismo día): falta la vuelta
+
+El piloto con una sola relación de OSM por línea (Task 3) mejoró mucho la fidelidad a las calles, pero el usuario notó, comparando contra el PDF, que solo se dibuja "la ida" — falta el resto del recorrido para cerrar el circuito de vuelta al punto de partida.
+
+Investigando: cada línea tiene **dos** relaciones de bus en OSM (ej. `Linea 1 El Cambio - Mercado 25 de Junio` y `Linea 1 Mercado 25 de Junio - El Cambio`), pero **ninguna de las dos por sí sola cubre el recorrido completo** — la comunidad de OSM partió cada línea en dos mitades que se unen en un punto compartido (para Línea 1, cerca de Puerto Bolívar; para Línea 6, en otro punto), no en "ida completa" + "vuelta completa" independientes. Verificado con Overpass en ambas líneas piloteadas: el extremo de una relación coincide con el extremo de la otra con solo 0-6 metros de separación — evidencia clara de que son dos mitades de un mismo circuito, no dos relaciones independientes.
+
+**Ajuste al diseño:** cuando existan las dos relaciones de una línea, se combinan automáticamente: se calculan sus 4 posibles emparejamientos de extremos (inicio-inicio, inicio-fin, fin-inicio, fin-fin), se toma el emparejamiento con menor distancia, y si esa distancia es menor a ~50m (umbral conservador, con margen holgado sobre los 0-6m observados) se concatenan en ese punto de unión (rellenando con OSRM si el hueco no es cero). Si las dos relaciones no encajan así (unión mayor a 50m), se usa solo una por coincidencia de nombre con la primera/última parada, igual que en Task 3 — esto cubre el caso de que ambas relaciones sean, en algunas líneas, recorridos independientes ya completos.
+
+Si tras este ajuste el resultado visual sigue sin convencer, el usuario pidió pasar a trazar manualmente desde el PDF esa línea puntual, aunque sea más lento, en vez de seguir iterando con métodos automáticos.
+
 ## Contexto y alcance
 
 La feature de línea de ruta coloreada (`2026-07-09-linea-ruta-coloreada-design.md`) dibuja correctamente el `path` de cada ruta en el mapa, pero el `path` sembrado hoy en `scripts/seed-data/build-routes.mjs` se genera como línea recta entre paradas consecutivas (`path: stops.map(stop => [stop.lat, stop.lng])`). Al revisar el PDF oficial de cada línea (`docs/rutas-gad-machala/Linea-N.pdf`), la ruta real sigue calles concretas (ej. Línea 1: Av. Ferroviaria → Av. Panamericana → Cdla. 10 de Agosto → ...), no líneas rectas que cruzan por encima de manzanas.
