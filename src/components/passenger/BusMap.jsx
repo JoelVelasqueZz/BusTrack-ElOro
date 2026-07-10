@@ -27,6 +27,13 @@ const passengerIcon = new L.DivIcon({
   iconAnchor: [10, 10],
 })
 
+const selectedStopIcon = new L.DivIcon({
+  className: 'stop-marker-selected',
+  html: '<span class="stop-marker-selected__pulse"></span><span class="stop-marker-selected__dot"></span>',
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+})
+
 function formatElapsed(ms) {
   const seconds = Math.round(ms / 1000)
   if (seconds < 60) return `${seconds} s`
@@ -60,7 +67,9 @@ function BusTrack({ busId, color }) {
   return <Polyline positions={points} pathOptions={{ color, weight: 4, opacity: 0.7 }} />
 }
 
-export function BusMap({ buses, stops, routeColor, path, passengerPosition }) {
+export function BusMap({ buses, stops, routeColor, path, passengerPosition, selectedStopId }) {
+  const selectedStop = stops.find((stop) => stop.id === selectedStopId)
+
   return (
     <MapContainer
       center={MACHALA_CENTER}
@@ -108,6 +117,15 @@ export function BusMap({ buses, stops, routeColor, path, passengerPosition }) {
           </Popup>
         </Marker>
       ))}
+
+      {selectedStop && (
+        <Marker
+          position={[selectedStop.lat, selectedStop.lng]}
+          icon={selectedStopIcon}
+          zIndexOffset={900}
+          interactive={false}
+        />
+      )}
 
       {passengerPosition && (
         <Marker

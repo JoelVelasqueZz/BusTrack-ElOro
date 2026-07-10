@@ -44,6 +44,7 @@ export function PassengerView() {
           routeColor={route?.color}
           path={route?.path}
           passengerPosition={passengerPosition}
+          selectedStopId={stopId}
         />
 
         <div className="passenger-view__topbar">
