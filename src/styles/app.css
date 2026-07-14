@@ -625,6 +625,63 @@ button, select, input {
   animation: passenger-pulse 2s ease-out infinite;
 }
 
+.locate-button-wrap {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.locate-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.locate-button:active {
+  background: var(--bg-light);
+}
+
+.locate-button__msg {
+  background: var(--navy);
+  color: var(--white);
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+  animation: locate-msg-fade-in 0.2s ease-out;
+}
+
+.locate-button__msg--error {
+  background: var(--red-dark);
+}
+
+@keyframes locate-msg-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .role-button,
   .trip-button {
@@ -639,5 +696,9 @@ button, select, input {
   .stop-marker-selected__pulse {
     animation: none;
     display: none;
+  }
+
+  .locate-button__msg {
+    animation: none;
   }
 }
