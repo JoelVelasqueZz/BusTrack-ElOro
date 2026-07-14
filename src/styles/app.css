@@ -682,6 +682,73 @@ button, select, input {
   }
 }
 
+.notify-settings {
+  position: relative;
+}
+
+.notify-settings__toggle {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.notify-settings__toggle:active {
+  background: var(--bg-light);
+}
+
+.notify-settings__panel {
+  position: absolute;
+  top: 44px;
+  left: 0;
+  z-index: 1000;
+  background: var(--white);
+  color: var(--navy);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 220px;
+}
+
+.notify-settings__label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  flex-wrap: wrap;
+}
+
+.notify-settings__input {
+  width: 48px;
+  padding: 4px 6px;
+  border: 1px solid var(--bg-light);
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.notify-settings__close {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--navy);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .role-button,
   .trip-button {

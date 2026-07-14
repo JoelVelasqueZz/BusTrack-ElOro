@@ -2,17 +2,20 @@ import { useEffect, useMemo, useState } from 'react'
 import { useRole } from '../../context/RoleContext.jsx'
 import { useBuses } from '../../hooks/useBuses.js'
 import { useEta } from '../../hooks/useEta.js'
+import { useNotifyThreshold } from '../../hooks/useNotifyThreshold.js'
 import { usePassengerLocation } from '../../hooks/usePassengerLocation.js'
 import { useRoutes } from '../../hooks/useRoutes.js'
 import { BusMap } from './BusMap.jsx'
 import { StopSelector } from './StopSelector.jsx'
 import { EtaPanel } from './EtaPanel.jsx'
+import { NotifySettings } from './NotifySettings.jsx'
 
 export function PassengerView() {
   const { clearRole } = useRole()
   const routes = useRoutes()
   const [routeId, setRouteId] = useState('')
   const [stopId, setStopId] = useState('')
+  const { thresholdMinutes, setThreshold } = useNotifyThreshold()
 
   useEffect(() => {
     if (!routeId && routes.length > 0) setRouteId(routes[0].id)
@@ -27,7 +30,7 @@ export function PassengerView() {
     [allBuses, routeId],
   )
 
-  const eta = useEta(routeBuses, stop, route?.path)
+  const eta = useEta(routeBuses, stop, route?.path, thresholdMinutes)
   const { position: passengerPosition } = usePassengerLocation()
 
   const handleRouteChange = (newRouteId) => {
@@ -68,6 +71,8 @@ export function PassengerView() {
           </label>
 
           <StopSelector stops={route?.stops ?? []} selectedStopId={stopId} onChange={setStopId} />
+
+          <NotifySettings thresholdMinutes={thresholdMinutes} onChange={setThreshold} />
         </div>
       </div>
 
