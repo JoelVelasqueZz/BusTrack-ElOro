@@ -68,6 +68,15 @@ function pathTotalLength(path) {
 // (gap inicio/fin chico); si no, es una ruta abierta y no hay vuelta que dar.
 const LOOP_GAP_METERS = 200
 
+// Cuando ida y vuelta pasan cerca una de la otra (misma calle, sentido
+// contrario), el bus y la parada pueden "engancharse" a tramos distintos
+// del trazado combinado aunque estén físicamente pegados — el resultado es
+// una distancia por trazado absurdamente mayor a la distancia real en línea
+// recta. Si eso pasa (más de DETOUR_FACTOR veces la distancia recta), no es
+// un rodeo real: es el trazado confundiendo el tramo. Se usa la distancia
+// recta en su lugar.
+const DETOUR_FACTOR = 5
+
 export function computeEta({ busPosition, busSpeedKmh, stopPosition, path, thresholdMinutes = 2 }) {
   const speedKmh = Math.max(busSpeedKmh || 0, MIN_SPEED_KMH)
   const speedMetersPerMin = (speedKmh * 1000) / 60
@@ -82,6 +91,11 @@ export function computeEta({ busPosition, busSpeedKmh, stopPosition, path, thres
     if (distanceMeters < 0) {
       const loopGap = haversine(path[0], path[path.length - 1])
       distanceMeters = loopGap <= LOOP_GAP_METERS ? distanceMeters + pathTotalLength(path) : 0
+    }
+
+    const straightLineMeters = haversine(busPosition, stopPosition)
+    if (distanceMeters > straightLineMeters * DETOUR_FACTOR) {
+      distanceMeters = straightLineMeters
     }
   } else {
     distanceMeters = haversine(busPosition, stopPosition)
