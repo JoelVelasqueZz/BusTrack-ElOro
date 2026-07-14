@@ -96,11 +96,13 @@ function LocateButton({ passengerPosition }) {
       map.flyTo([passengerPosition.lat, passengerPosition.lng], 17)
       return
     }
+    if (status === 'locating') return
     setStatus('locating')
+    timeoutRef.current = setTimeout(() => setStatus('error'), 6000)
     try {
       await Geolocation.requestPermissions()
-      timeoutRef.current = setTimeout(() => setStatus('error'), 6000)
     } catch {
+      clearTimeout(timeoutRef.current)
       setStatus('error')
     }
   }
