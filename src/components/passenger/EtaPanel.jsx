@@ -14,11 +14,11 @@ export function EtaPanel({ eta, stopId, stopName }) {
   }, [stopId])
 
   useEffect(() => {
-    if (eta.within2min && !wasWithin2minRef.current && eta.nearestBus) {
+    if (eta.withinThreshold && !wasWithin2minRef.current && eta.nearestBus) {
       notifyBusNear(eta.nearestBus.numero, eta.etaMinutes, eta.nearestBus.busId).catch(() => {})
     }
-    wasWithin2minRef.current = eta.within2min
-  }, [eta.within2min, eta.nearestBus, eta.etaMinutes])
+    wasWithin2minRef.current = eta.withinThreshold
+  }, [eta.withinThreshold, eta.nearestBus, eta.etaMinutes])
 
   if (!stopId) {
     return (
@@ -43,7 +43,7 @@ export function EtaPanel({ eta, stopId, stopName }) {
   }
 
   return (
-    <div className={`eta-panel ${eta.within2min ? 'eta-panel--near' : ''}`}>
+    <div className={`eta-panel ${eta.withinThreshold ? 'eta-panel--near' : ''}`}>
       <div className="eta-panel__header">
         <span className="eta-panel__stop">{stopName}</span>
         <span className="eta-panel__bus">
@@ -60,7 +60,7 @@ export function EtaPanel({ eta, stopId, stopName }) {
 
       <div className="eta-panel__footer">
         <span>{eta.distanceMeters != null ? `${Math.round(eta.distanceMeters)} m` : '—'}</span>
-        {eta.within2min && <span className="eta-panel__alert">¡Bus cerca!</span>}
+        {eta.withinThreshold && <span className="eta-panel__alert">¡Bus cerca!</span>}
       </div>
     </div>
   )

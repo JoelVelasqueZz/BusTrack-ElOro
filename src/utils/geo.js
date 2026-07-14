@@ -52,7 +52,7 @@ export function distanceAlongPath(path, projected) {
   return distance
 }
 
-export function computeEta({ busPosition, busSpeedKmh, stopPosition, path }) {
+export function computeEta({ busPosition, busSpeedKmh, stopPosition, path, thresholdMinutes = 2 }) {
   const speedKmh = Math.max(busSpeedKmh || 0, MIN_SPEED_KMH)
   const speedMetersPerMin = (speedKmh * 1000) / 60
 
@@ -72,6 +72,6 @@ export function computeEta({ busPosition, busSpeedKmh, stopPosition, path }) {
   return {
     etaMinutes,
     distanceMeters,
-    within2min: etaMinutes <= 2,
+    withinThreshold: etaMinutes <= thresholdMinutes,
   }
 }

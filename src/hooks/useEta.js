@@ -1,9 +1,9 @@
 import { useMemo, useRef } from 'react'
 import { computeEta, haversine } from '../utils/geo.js'
 
-const EMPTY_ETA = { etaMinutes: null, distanceMeters: null, within2min: false, nearestBus: null }
+const EMPTY_ETA = { etaMinutes: null, distanceMeters: null, withinThreshold: false, nearestBus: null }
 
-export function useEta(buses, stop, path) {
+export function useEta(buses, stop, path, thresholdMinutes) {
   const previousPositionsRef = useRef(new Map())
 
   return useMemo(() => {
@@ -40,6 +40,7 @@ export function useEta(buses, stop, path) {
         busSpeedKmh: speedKmh,
         stopPosition: [stop.lat, stop.lng],
         path,
+        thresholdMinutes,
       })
 
       if (!best || result.etaMinutes < best.etaMinutes) {
@@ -48,5 +49,5 @@ export function useEta(buses, stop, path) {
     }
 
     return best ?? EMPTY_ETA
-  }, [buses, stop, path])
+  }, [buses, stop, path, thresholdMinutes])
 }
