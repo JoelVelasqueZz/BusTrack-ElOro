@@ -72,6 +72,11 @@ function LocateButton({ passengerPosition }) {
   const map = useMap()
   const [status, setStatus] = useState('idle') // 'idle' | 'locating' | 'error'
   const timeoutRef = useRef(null)
+  const statusRef = useRef('idle')
+
+  useEffect(() => {
+    statusRef.current = status
+  }, [status])
 
   useEffect(() => {
     if (status === 'locating' && passengerPosition) {
@@ -102,6 +107,7 @@ function LocateButton({ passengerPosition }) {
     try {
       await Geolocation.requestPermissions()
     } catch {
+      if (statusRef.current !== 'locating') return
       clearTimeout(timeoutRef.current)
       setStatus('error')
     }
