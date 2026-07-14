@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, CircleMarker, Polyline } from 'react-leaflet'
+import { useEffect, useRef, useState } from 'react'
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { ref, onValue, off } from 'firebase/database'
 import { db } from '../../firebase.js'
+import { Geolocation } from '@capacitor/geolocation'
 import { MACHALA_CENTER, DEFAULT_ZOOM } from '../../config/machala.js'
 
 const busIcon = new L.Icon({
@@ -65,6 +66,65 @@ function BusTrack({ busId, color }) {
   const points = useTrackPoints(busId)
   if (points.length < 2) return null
   return <Polyline positions={points} pathOptions={{ color, weight: 4, opacity: 0.7 }} />
+}
+
+function LocateButton({ passengerPosition }) {
+  const map = useMap()
+  const [status, setStatus] = useState('idle') // 'idle' | 'locating' | 'error'
+  const timeoutRef = useRef(null)
+
+  useEffect(() => {
+    if (status === 'locating' && passengerPosition) {
+      map.flyTo([passengerPosition.lat, passengerPosition.lng], 17)
+      setStatus('idle')
+      clearTimeout(timeoutRef.current)
+    }
+  }, [passengerPosition, status, map])
+
+  useEffect(() => {
+    if (status !== 'error') return
+    const timer = setTimeout(() => setStatus('idle'), 4000)
+    return () => clearTimeout(timer)
+  }, [status])
+
+  // Evita "setState tras unmount" si la vista se cierra mientras el timeout
+  // de 6s de `locating` sigue pendiente (ej. el pasajero cambia de rol).
+  useEffect(() => () => clearTimeout(timeoutRef.current), [])
+
+  const handleClick = async () => {
+    if (passengerPosition) {
+      map.flyTo([passengerPosition.lat, passengerPosition.lng], 17)
+      return
+    }
+    setStatus('locating')
+    try {
+      await Geolocation.requestPermissions()
+      timeoutRef.current = setTimeout(() => setStatus('error'), 6000)
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  return (
+    <div className="locate-button-wrap">
+      {status === 'locating' && (
+        <span className="locate-button__msg">Buscando tu ubicación…</span>
+      )}
+      {status === 'error' && (
+        <span className="locate-button__msg locate-button__msg--error">
+          No se pudo obtener tu ubicación
+        </span>
+      )}
+      <button
+        type="button"
+        className="locate-button"
+        aria-label="Centrar en mi ubicación"
+        onClick={handleClick}
+      >
+        <span aria-hidden="true">📍</span>
+      </button>
+    </div>
+  )
 }
 
 export function BusMap({ buses, stops, routeColor, path, passengerPosition, selectedStopId }) {
@@ -135,6 +195,8 @@ export function BusMap({ buses, stops, routeColor, path, passengerPosition, sele
           interactive={false}
         />
       )}
+
+      <LocateButton passengerPosition={passengerPosition} />
     </MapContainer>
   )
 }
