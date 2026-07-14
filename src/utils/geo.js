@@ -52,6 +52,22 @@ export function distanceAlongPath(path, projected) {
   return distance
 }
 
+function pathTotalLength(path) {
+  let total = 0
+  for (let i = 0; i < path.length - 1; i++) {
+    total += haversine(path[i], path[i + 1])
+  }
+  return total
+}
+
+// La mayoría de las rutas son loops cerrados (ida+vuelta combinadas en un
+// solo trazado, inicio y fin casi en el mismo punto). Si la parada queda
+// "detrás" del bus en la numeración del trazado, no significa que esté a
+// 0m — significa que el bus ya pasó y tiene que dar toda la vuelta para
+// volver a llegar. Solo se envuelve así cuando el trazado realmente cierra
+// (gap inicio/fin chico); si no, es una ruta abierta y no hay vuelta que dar.
+const LOOP_GAP_METERS = 200
+
 export function computeEta({ busPosition, busSpeedKmh, stopPosition, path, thresholdMinutes = 2 }) {
   const speedKmh = Math.max(busSpeedKmh || 0, MIN_SPEED_KMH)
   const speedMetersPerMin = (speedKmh * 1000) / 60
@@ -62,7 +78,11 @@ export function computeEta({ busPosition, busSpeedKmh, stopPosition, path, thres
     const stopProjected = nearestPointOnPath(stopPosition, path)
     const busDistance = distanceAlongPath(path, busProjected)
     const stopDistance = distanceAlongPath(path, stopProjected)
-    distanceMeters = Math.max(stopDistance - busDistance, 0)
+    distanceMeters = stopDistance - busDistance
+    if (distanceMeters < 0) {
+      const loopGap = haversine(path[0], path[path.length - 1])
+      distanceMeters = loopGap <= LOOP_GAP_METERS ? distanceMeters + pathTotalLength(path) : 0
+    }
   } else {
     distanceMeters = haversine(busPosition, stopPosition)
   }
