@@ -6,15 +6,19 @@ import { useMotionDetector } from '../../hooks/useMotionDetector.js'
 import { useRouteRecorder } from '../../hooks/useRouteRecorder.js'
 import { startPublishing, updateBusInfo, stopPublishing } from '../../services/locationService.js'
 import { reportPothole } from '../../services/potholeService.js'
+import { reportIncident, resolveIncident } from '../../services/incidentService.js'
+import { INCIDENT_LABELS } from '../../config/incidents.js'
 import { saveRecordedPath } from '../../services/routeService.js'
 import { assignBusUnit } from '../../services/busUnitService.js'
 import { TripControls } from './TripControls.jsx'
+import { IncidentReporter } from './IncidentReporter.jsx'
 
 export function ConductorView() {
   const { deviceId, clearRole } = useRole()
   const [tripActive, setTripActive] = useState(false)
   const [busInfo, setBusInfo] = useState(null)
   const [potholeCount, setPotholeCount] = useState(0)
+  const [activeIncident, setActiveIncident] = useState(null)
   const [recordingRoute, setRecordingRoute] = useState(false)
   const [startError, setStartError] = useState(null)
 
@@ -68,6 +72,7 @@ export function ConductorView() {
     }
     setBusInfo(info)
     setPotholeCount(0)
+    setActiveIncident(null)
     setRecordingRoute(recordRoute)
     setTripActive(true)
     startPublishing(info)
@@ -84,6 +89,18 @@ export function ConductorView() {
     setRecordingRoute(false)
     stopPublishing()
     setBusInfo(null)
+  }
+
+  const handleReportIncident = (type, note) => {
+    if (!busInfo) return
+    reportIncident(busInfo.busId, { type, note }).catch(() => {})
+    setActiveIncident({ type, label: INCIDENT_LABELS[type] })
+  }
+
+  const handleResolveIncident = () => {
+    if (!busInfo) return
+    resolveIncident(busInfo.busId).catch(() => {})
+    setActiveIncident(null)
   }
 
   return (
@@ -105,31 +122,39 @@ export function ConductorView() {
       )}
 
       {tripActive && (
-        <div className="trip-status">
-          <div className="trip-status__row trip-status__row--headline">
-            <span className="trip-status__label">Viaje activo</span>
-            <span className="trip-status__value">
-              {busInfo?.empresa} #{busInfo?.unitLabel} → {busInfo?.destino}
-            </span>
-          </div>
-          <div className="trip-status__row">
-            <span className="trip-status__label">Ubicación</span>
-            <span className="trip-status__value">
-              {position ? `${position.lat.toFixed(5)}, ${position.lng.toFixed(5)}` : 'Obteniendo...'}
-            </span>
-          </div>
-          <div className="trip-status__row">
-            <span className="trip-status__label">Baches detectados</span>
-            <span className="trip-status__value trip-status__value--amber">{potholeCount}</span>
-          </div>
-          {recordingRoute && (
-            <div className="trip-status__row">
-              <span className="trip-status__label">Grabando recorrido</span>
-              <span className="trip-status__value">{pointCount} puntos</span>
+        <>
+          <div className="trip-status">
+            <div className="trip-status__row trip-status__row--headline">
+              <span className="trip-status__label">Viaje activo</span>
+              <span className="trip-status__value">
+                {busInfo?.empresa} #{busInfo?.unitLabel} → {busInfo?.destino}
+              </span>
             </div>
-          )}
-          {geoError && <p className="trip-status__error">Error de GPS: {geoError.message}</p>}
-        </div>
+            <div className="trip-status__row">
+              <span className="trip-status__label">Ubicación</span>
+              <span className="trip-status__value">
+                {position ? `${position.lat.toFixed(5)}, ${position.lng.toFixed(5)}` : 'Obteniendo...'}
+              </span>
+            </div>
+            <div className="trip-status__row">
+              <span className="trip-status__label">Baches detectados</span>
+              <span className="trip-status__value trip-status__value--amber">{potholeCount}</span>
+            </div>
+            {recordingRoute && (
+              <div className="trip-status__row">
+                <span className="trip-status__label">Grabando recorrido</span>
+                <span className="trip-status__value">{pointCount} puntos</span>
+              </div>
+            )}
+            {geoError && <p className="trip-status__error">Error de GPS: {geoError.message}</p>}
+          </div>
+
+          <IncidentReporter
+            activeIncident={activeIncident}
+            onReport={handleReportIncident}
+            onResolve={handleResolveIncident}
+          />
+        </>
       )}
     </div>
   )
