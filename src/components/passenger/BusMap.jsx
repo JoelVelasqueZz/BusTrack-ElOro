@@ -5,6 +5,7 @@ import { ref, onValue, off } from 'firebase/database'
 import { db } from '../../firebase.js'
 import { Geolocation } from '@capacitor/geolocation'
 import { MACHALA_CENTER, DEFAULT_ZOOM } from '../../config/machala.js'
+import { INCIDENT_LABELS } from '../../config/incidents.js'
 
 const busIcon = new L.Icon({
   iconUrl: '/marker-bus.svg',
@@ -33,6 +34,13 @@ const selectedStopIcon = new L.DivIcon({
   html: '<span class="stop-marker-selected__pulse"></span><span class="stop-marker-selected__dot"></span>',
   iconSize: [28, 28],
   iconAnchor: [14, 14],
+})
+
+const incidentBadgeIcon = new L.DivIcon({
+  className: 'incident-badge',
+  html: '<span aria-hidden="true">⚠️</span>',
+  iconSize: [18, 18],
+  iconAnchor: [9, 26],
 })
 
 function formatElapsed(ms) {
@@ -182,9 +190,27 @@ export function BusMap({ buses, stops, routeColor, path, passengerPosition, sele
                 ⚠️ Señal perdida hace {formatElapsed(bus.lastUpdateMs)}
               </div>
             )}
+            {bus.incident && (
+              <div className="bus-popup__incident">
+                ⚠️ {INCIDENT_LABELS[bus.incident.type]}
+                {bus.incident.note && `: ${bus.incident.note}`}
+              </div>
+            )}
           </Popup>
         </Marker>
       ))}
+
+      {buses.map((bus) =>
+        bus.incident ? (
+          <Marker
+            key={`incident-${bus.busId}`}
+            position={[bus.lat, bus.lng]}
+            icon={incidentBadgeIcon}
+            zIndexOffset={950}
+            interactive={false}
+          />
+        ) : null,
+      )}
 
       {selectedStop && (
         <Marker

@@ -622,6 +622,21 @@ button, select, input {
   font-size: 0.85rem;
 }
 
+.incident-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+.bus-popup__incident {
+  margin-top: 4px;
+  color: var(--red-dark);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
 .passenger-marker {
   position: relative;
 }
