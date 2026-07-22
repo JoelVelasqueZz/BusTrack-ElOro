@@ -47,7 +47,7 @@ export function EtaPanel({ eta, stopId, stopName }) {
       <div className="eta-panel__header">
         <span className="eta-panel__stop">{stopName}</span>
         <span className="eta-panel__bus">
-          {eta.nearestBus.empresa} #{eta.nearestBus.numero} → {eta.nearestBus.destino}
+          {eta.nearestBus.empresa} #{eta.nearestBus.numero}
         </span>
       </div>
 

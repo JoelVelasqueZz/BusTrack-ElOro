@@ -184,7 +184,7 @@ export function BusMap({ buses, stops, routeColor, path, passengerPosition, sele
           icon={bus.isStale ? busIconStale : busIcon}
         >
           <Popup>
-            {bus.empresa} #{bus.unitLabel ?? bus.numero} → {bus.destino}
+            {bus.empresa} #{bus.unitLabel ?? bus.numero}
             {bus.isStale && (
               <div className="bus-popup__stale">
                 ⚠️ Señal perdida hace {formatElapsed(bus.lastUpdateMs)}

@@ -38,6 +38,7 @@ export function useEta(buses, stop, path, thresholdMinutes) {
       const result = computeEta({
         busPosition: [bus.lat, bus.lng],
         busSpeedKmh: speedKmh,
+        busHeading: bus.heading,
         stopPosition: [stop.lat, stop.lng],
         path,
         thresholdMinutes,

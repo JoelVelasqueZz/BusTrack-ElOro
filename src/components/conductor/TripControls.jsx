@@ -6,15 +6,13 @@ export function TripControls({ tripActive, onStart, onStop }) {
   const [routeId, setRouteId] = useState('')
   const [empresa, setEmpresa] = useState('')
   const [numero, setNumero] = useState('')
-  const [destino, setDestino] = useState('')
   const [recordRoute, setRecordRoute] = useState(false)
 
   useEffect(() => {
     if (!routeId && routes.length > 0) setRouteId(routes[0].id)
   }, [routes, routeId])
 
-  const canStart =
-    routeId && empresa.trim().length > 0 && numero.trim().length > 0 && destino.trim().length > 0
+  const canStart = routeId && empresa.trim().length > 0 && numero.trim().length > 0
 
   return (
     <div className="trip-controls">
@@ -36,7 +34,7 @@ export function TripControls({ tripActive, onStart, onStop }) {
           value={empresa}
           onChange={(e) => setEmpresa(e.target.value)}
           disabled={tripActive}
-          placeholder="Ej: CIFA"
+          placeholder="Ej: Coop. Urbana Machala"
         />
       </label>
 
@@ -49,17 +47,6 @@ export function TripControls({ tripActive, onStart, onStop }) {
           onChange={(e) => setNumero(e.target.value)}
           disabled={tripActive}
           placeholder="Ej: 12"
-        />
-      </label>
-
-      <label className="trip-controls__field">
-        Destino
-        <input
-          type="text"
-          value={destino}
-          onChange={(e) => setDestino(e.target.value)}
-          disabled={tripActive}
-          placeholder="Ej: Huaquillas"
         />
       </label>
 
@@ -86,7 +73,6 @@ export function TripControls({ tripActive, onStart, onStop }) {
               routeId,
               empresa: empresa.trim(),
               numero: numero.trim(),
-              destino: destino.trim(),
               recordRoute,
             })
           }

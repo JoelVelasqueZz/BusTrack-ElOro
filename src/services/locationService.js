@@ -34,7 +34,7 @@ function publishBusPosition(busId, data) {
 
 function publish() {
   if (!latestBusInfo) return
-  const { busId, driverId, routeId, empresa, numero, unitLabel, destino, lat, lng, speed, heading } =
+  const { busId, driverId, routeId, empresa, numero, unitLabel, lat, lng, speed, heading } =
     latestBusInfo
   if (lat == null || lng == null) return
 
@@ -45,7 +45,6 @@ function publish() {
     empresa,
     numero,
     unitLabel,
-    destino,
     lat,
     lng,
     speed: speed ?? null,

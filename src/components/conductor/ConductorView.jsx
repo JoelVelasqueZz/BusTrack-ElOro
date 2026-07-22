@@ -47,7 +47,7 @@ export function ConductorView() {
     })
   }, [tripActive, position, busInfo])
 
-  const handleStart = async ({ routeId, empresa, numero, destino, recordRoute }) => {
+  const handleStart = async ({ routeId, empresa, numero, recordRoute }) => {
     setStartError(null)
     let assignment
     try {
@@ -64,7 +64,6 @@ export function ConductorView() {
       empresa,
       numero,
       unitLabel,
-      destino,
       lat: null,
       lng: null,
       speed: null,
@@ -127,7 +126,7 @@ export function ConductorView() {
             <div className="trip-status__row trip-status__row--headline">
               <span className="trip-status__label">Viaje activo</span>
               <span className="trip-status__value">
-                {busInfo?.empresa} #{busInfo?.unitLabel} → {busInfo?.destino}
+                {busInfo?.empresa} #{busInfo?.unitLabel}
               </span>
             </div>
             <div className="trip-status__row">

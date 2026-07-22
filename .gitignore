@@ -4,3 +4,11 @@ dist-ssr
 *.local
 .env
 android
+
+# Documentos/imagenes de la propuesta, no forman parte del proyecto
+docs/IMGS/
+docs/INNOVA26_Plantilla_Propuesta.docx
+docs/INNOVA26_TEC_REINTE.docx
+docs/INNOVA26_TEC_REINTE.pdf
+docs/info.txt
+docs/prueba.jpeg
