@@ -8,6 +8,17 @@ Proyecto desarrollado para **INNOVA UTMACH 2026**.
 
 En una encuesta propia a 24 usuarios de transporte urbano en Machala, el **79.2%** dijo que nunca o solo a veces sabe cuánto falta para que llegue su bus, y el **75%** reportó esperar entre 5 y 15 minutos en la parada sin saber si el bus viene. El **91.7%** calificó con la nota máxima la importancia de una app que muestre la ubicación del bus en tiempo real.
 
+<table>
+<tr>
+<td><img src="docs/IMGS/ENC_1.1.png" width="400"/></td>
+<td><img src="docs/IMGS/ENC_1.2.png" width="400"/></td>
+</tr>
+<tr>
+<td><img src="docs/IMGS/ENC_1.3.png" width="400"/></td>
+<td><img src="docs/IMGS/ENC_1.4.png" width="400"/></td>
+</tr>
+</table>
+
 BusTrack resuelve esto con una sola app con dos vistas: el conductor transmite su posición mientras maneja, y el pasajero ve el bus acercarse en un mapa en vivo, con ETA calculado sobre el trazado real de la ruta.
 
 ## Características
