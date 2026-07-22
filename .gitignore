@@ -6,9 +6,18 @@ dist-ssr
 android
 
 # Documentos/imagenes de la propuesta, no forman parte del proyecto
-docs/IMGS/
+docs/IMGS/*
+!docs/IMGS/ENC_1.1.png
+!docs/IMGS/ENC_1.2.png
+!docs/IMGS/ENC_1.3.png
+!docs/IMGS/ENC_1.4.png
 docs/INNOVA26_Plantilla_Propuesta.docx
 docs/INNOVA26_TEC_REINTE.docx
 docs/INNOVA26_TEC_REINTE.pdf
 docs/info.txt
 docs/prueba.jpeg
+
+# Documentos internos de planificacion y la encuesta: se quedan en local,
+# no se publican en GitHub
+docs/superpowers/
+docs/Encuesta sobre transporte urbano en Machala - INNOVA UTMACH 2026 (Respuestas).xlsx
