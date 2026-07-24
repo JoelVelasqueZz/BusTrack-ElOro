@@ -4,6 +4,7 @@ dist-ssr
 *.local
 .env
 android
+.firebase
 
 # Documentos/imagenes de la propuesta, no forman parte del proyecto
 docs/IMGS/*
@@ -11,6 +12,10 @@ docs/IMGS/*
 !docs/IMGS/ENC_1.2.png
 !docs/IMGS/ENC_1.3.png
 !docs/IMGS/ENC_1.4.png
+!docs/IMGS/qr-bustrack-demo.png
+
+# Material de pitch de los compañeros, no forma parte del proyecto
+docs/PITCH/
 docs/INNOVA26_Plantilla_Propuesta.docx
 docs/INNOVA26_TEC_REINTE.docx
 docs/INNOVA26_TEC_REINTE.pdf

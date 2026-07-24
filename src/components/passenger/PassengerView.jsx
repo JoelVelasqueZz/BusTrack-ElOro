@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useRole } from '../../context/RoleContext.jsx'
 import { useBuses } from '../../hooks/useBuses.js'
+import { useDestinations } from '../../hooks/useDestinations.js'
 import { useEta } from '../../hooks/useEta.js'
 import { useNotifyThreshold } from '../../hooks/useNotifyThreshold.js'
 import { usePassengerLocation } from '../../hooks/usePassengerLocation.js'
@@ -9,6 +10,8 @@ import { BusMap } from './BusMap.jsx'
 import { StopSelector } from './StopSelector.jsx'
 import { EtaPanel } from './EtaPanel.jsx'
 import { NotifySettings } from './NotifySettings.jsx'
+import { DestinationFinder } from './DestinationFinder.jsx'
+import { CitySelector } from './CitySelector.jsx'
 
 export function PassengerView() {
   const { clearRole } = useRole()
@@ -16,6 +19,7 @@ export function PassengerView() {
   const [routeId, setRouteId] = useState('')
   const [stopId, setStopId] = useState('')
   const { thresholdMinutes, setThreshold } = useNotifyThreshold()
+  const destinations = useDestinations(routes)
 
   useEffect(() => {
     if (!routeId && routes.length > 0) setRouteId(routes[0].id)
@@ -36,6 +40,11 @@ export function PassengerView() {
   const handleRouteChange = (newRouteId) => {
     setRouteId(newRouteId)
     setStopId('')
+  }
+
+  const handleDestinationSelect = ({ routeId: newRouteId, stopId: newStopId }) => {
+    setRouteId(newRouteId)
+    setStopId(newStopId)
   }
 
   return (
@@ -71,7 +80,11 @@ export function PassengerView() {
           </label>
 
           <StopSelector stops={route?.stops ?? []} selectedStopId={stopId} onChange={setStopId} />
+        </div>
 
+        <div className="passenger-view__toolbar">
+          <DestinationFinder destinations={destinations} onSelect={handleDestinationSelect} />
+          <CitySelector />
           <NotifySettings thresholdMinutes={thresholdMinutes} onChange={setThreshold} />
         </div>
       </div>

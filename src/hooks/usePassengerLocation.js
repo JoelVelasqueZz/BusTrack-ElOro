@@ -13,7 +13,10 @@ export function usePassengerLocation() {
 
     async function start() {
       try {
-        await Geolocation.requestPermissions()
+        // requestPermissions() no está implementado en web (Capacitor lanza
+        // "unimplemented" ahí); watchPosition ya dispara el prompt nativo del
+        // navegador, así que no bloqueamos el flujo si esto falla.
+        await Geolocation.requestPermissions().catch(() => {})
         watchId = await Geolocation.watchPosition(
           { enableHighAccuracy: true, timeout: 10000 },
           (data, err) => {

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 export function NotifySettings({ thresholdMinutes, onChange }) {
   const [open, setOpen] = useState(false)
@@ -28,31 +29,33 @@ export function NotifySettings({ thresholdMinutes, onChange }) {
         <span aria-hidden="true">⚙️</span>
       </button>
 
-      {open && (
-        <div className="notify-settings__backdrop" onClick={() => setOpen(false)}>
-          <div className="notify-settings__panel" onClick={(e) => e.stopPropagation()}>
-            <label className="notify-settings__label">
-              Avisarme cuando el bus esté a
-              <input
-                type="number"
-                min={1}
-                max={15}
-                value={draft}
-                onChange={handleInputChange}
-                className="notify-settings__input"
-              />
-              minutos
-            </label>
-            <button
-              type="button"
-              className="notify-settings__close"
-              onClick={() => setOpen(false)}
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      )}
+      {open &&
+        createPortal(
+          <div className="notify-settings__backdrop" onClick={() => setOpen(false)}>
+            <div className="notify-settings__panel" onClick={(e) => e.stopPropagation()}>
+              <label className="notify-settings__label">
+                Avisarme cuando el bus esté a
+                <input
+                  type="number"
+                  min={1}
+                  max={15}
+                  value={draft}
+                  onChange={handleInputChange}
+                  className="notify-settings__input"
+                />
+                minutos
+              </label>
+              <button
+                type="button"
+                className="notify-settings__close"
+                onClick={() => setOpen(false)}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   )
 }

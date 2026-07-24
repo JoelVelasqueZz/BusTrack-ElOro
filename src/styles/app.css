@@ -467,6 +467,16 @@ button, select, input {
   gap: var(--sp-1);
 }
 
+.passenger-view__toolbar {
+  position: absolute;
+  top: 72px;
+  left: var(--sp-2);
+  right: var(--sp-2);
+  z-index: 500;
+  display: flex;
+  gap: var(--sp-1);
+}
+
 .route-selector,
 .stop-selector {
   flex: 1 1 0;
@@ -764,12 +774,13 @@ button, select, input {
 }
 
 .notify-settings {
+  flex: 0 0 auto;
   position: relative;
 }
 
 .notify-settings__toggle {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   border: none;
   border-radius: 50%;
@@ -836,6 +847,197 @@ button, select, input {
   font-size: 13px;
   cursor: pointer;
   padding: 4px 8px;
+}
+
+.destination-finder {
+  flex: 1 1 auto;
+  min-width: 0;
+  position: relative;
+}
+
+.city-selector {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.destination-finder__toggle {
+  width: 100%;
+  height: 40px;
+  padding: 0 var(--sp-2);
+  border: none;
+  border-radius: var(--radius-pill);
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.destination-finder__toggle-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.city-selector__toggle {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--navy);
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.destination-finder__toggle:active,
+.city-selector__toggle:active {
+  background: var(--bg-light);
+}
+
+.destination-finder__backdrop,
+.city-selector__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--sp-2);
+}
+
+.destination-finder__panel,
+.city-selector__panel {
+  width: 100%;
+  max-width: 320px;
+  margin-top: 64px;
+  max-height: calc(100vh - 128px);
+  background: var(--white);
+  color: var(--navy);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.destination-finder__title,
+.city-selector__title {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.destination-finder__search {
+  border: 1px solid var(--bg-light);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 15px;
+  font-family: var(--font-body);
+}
+
+.destination-finder__list,
+.city-selector__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.destination-finder__item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--bg-light);
+  padding: 12px 4px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.destination-finder__item-count {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.destination-finder__empty {
+  padding: 12px 4px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.destination-finder__back {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--navy);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.destination-finder__close,
+.city-selector__close {
+  align-self: flex-end;
+  background: none;
+  border: none;
+  color: var(--navy);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.city-selector__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--bg-light);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.city-selector__badge {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
+  background: var(--bg-light);
+  padding: 4px 8px;
+  border-radius: var(--radius-pill);
+}
+
+.city-selector__badge--active {
+  color: var(--white);
+  background: var(--amber-dark);
 }
 
 @media (prefers-reduced-motion: reduce) {
